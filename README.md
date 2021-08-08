@@ -14,9 +14,6 @@ click to this link [here](https://confident-bardeen-5955c6.netlify.app/)
 - Bootstrap
 - LocationQI API 
 
-![location ](first.png)
-
-![map](map.png)
 ## Time Estimates
 
 Name of feature: City Explorer
