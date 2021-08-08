@@ -1,34 +1,30 @@
 # Project Name
 
-**Author**: Your Name Goes Here
-**Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)
+**Author**: Mosa Rabea
+**Version**: 1.0.0 
 
 ## Overview
-<!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
+The application retern the lon ,Lat, full city name and the map for the city name was entered
 
 ## Getting Started
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+click to this link [here](https://confident-bardeen-5955c6.netlify.app/)
 
 ## Architecture
-<!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
+- ReactJs
+- Bootstrap
+- LocationQI API 
 
-## Change Log
-<!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example:
+![location ](first.png)
 
-01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource. -->
+![map](map.png)
+## Time Estimates
 
-## Credit and Collaborations
-<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
+Name of feature: City Explorer
 
+Estimate of time needed to complete: 2 hours
 
-# Time Estimates:
+Start time: 3:00pm
 
-Name of feature: ________________________________
+Finish time: 9:20pm
 
-Estimate of time needed to complete: _____
-
-Start time: _____
-
-Finish time: _____
-
-Actual time needed to complete: _____
+Actual time needed to complete: 6 hours and 20 min
