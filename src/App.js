@@ -1,26 +1,25 @@
-import React, { Component } from "react";
-import Main from "./components/Main";
-import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import { Container, Row, Col } from "react-bootstrap";
-import Alert from "react-bootstrap/Alert";
-import Weather from "./components/Weather";
-import Movies from "./components/Movies";
-
+import React, { Component } from 'react';
+import Explore from './components/Explore';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { Container, Row, Col } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+import Weather from './components/Weather';
+import Movies from './components/Movies';
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      lat: "",
-      lon: "",
-      cityName: "",
+      lat: '',
+      lon: '',
+      cityName: '',
       mapShow: false,
       displayError: false,
-      errorMsg: "",
+      errorMsg: '',
       weatherData: [],
       movieData: [],
     };
@@ -35,37 +34,26 @@ class App extends Component {
   submitHandler = (e) => {
     e.preventDefault();
 
-    let locUrl = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONAPI_KEY}&q=${this.state.cityName}&format=json`;
-    axios.get(locUrl)
+    let locUrl = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONAPI_KEY}&q=${this.state.cityName}&format=json&accept-language=en
+    `;
+    axios
+      .get(locUrl)
       .then((response) => {
         let data = response.data[0];
 
         this.setState({
-          cityName: data.display_name,
+          cityName: data.display_name.split(",")[0],
           lat: data.lat,
           lon: data.lon,
           mapShow: true,
           displayError: false,
-          errorMsg: "",
+          errorMsg: '',
         });
+        this.handeWeater()
+        this.handelMovies()
       })
-      .then((lat,lon) => {
-        let weathUrl = `${process.env.REACT_APP_BACKEND_URL}/weather/${lat}/${lon}`;
-        axios.get(weathUrl).then((response) => {
-          this.setState({
-            weatherData: response.data,
-          });
-        });
-      })
-      .then((cityName) => {
-        
-        let movUrl = `${process.env.REACT_APP_BACKEND_URL}/movies/${cityName}`;
-        axios.get(movUrl).then((response) => {
-          this.setState({
-            movieData: response.data,
-          });
-        });
-      })
+     
+      
       .catch((error) => {
         this.setState({
           errorMsg: error,
@@ -74,36 +62,56 @@ class App extends Component {
         });
       });
   };
+  handelMovies=()=>{
+    let movUrl = `http://localhost:3022/movies?city=${this.state.cityName}`;
+    axios.get(movUrl).then((response) => {
+      this.setState({
+        movieData: response.data,
+      });
+    });
+  }
+handeWeater=()=>{
+  console.log(this.state.cityName);
+  let weathUrl = `http://localhost:3022/weather?cityName=${this.state.cityName}`;
+  axios.get(weathUrl).then((response) => {
+    this.setState({
+      weatherData: response.data,
+    });
+    console.log(response.data);
+  });
 
+
+}
   render() {
     return (
       <div>
-        <Container fluid>
+        <Container>
           <Row>
             {this.state.displayError && (
-              <Alert key={1} variant={"danger"}>
+              <Alert key={1} variant={'danger'}>
                 Error In The Data
               </Alert>
             )}
           </Row>
+
           <Row>
-            {" "}
-            <div style={{ margin: "20px" }}>
+            {' '}
+            <div style={{ margin: '20px' }}>
               <Form onSubmit={(e) => this.submitHandler(e)}>
                 <Form.Group
-                  className="mb-3"
-                  controlId="formBasicCity"
-                  style={{ display: "flex" }}
+                  className='mb-3'
+                  controlId='formBasicCity'
+                  style={{ display: 'flex' }}
                 >
                   <Form.Control
                     onChange={(e) => {
                       this.InputHandler(e);
                     }}
-                    type="text"
-                    placeholder="Enter a City name ..."
-                    style={{ width: "300px" }}
+                    type='text'
+                    placeholder='Enter a City name ...'
+                    style={{ width: '300px' }}
                   />
-                  <Button variant="primary" type="submit">
+                  <Button variant='primary' type='submit'>
                     Explore!
                   </Button>
                 </Form.Group>
@@ -113,8 +121,8 @@ class App extends Component {
           {this.state.mapShow && (
             <Row>
               <Col>
-                <div style={{ padding: "20px" }}>
-                  <Main
+                <div style={{ padding: '20px' }}>
+                  <Explore
                     cityName={this.state.cityName}
                     lat={this.state.lat}
                     lon={this.state.lon}
@@ -138,15 +146,11 @@ class App extends Component {
             </Row>
           )}
 
-          <Row fluid style={{ margin: "20px" }}>
-
+          <Row fluid style={{ margin: '20px' }}>
             {this.state.movieData && (
-
               <Col>
                 <>
                   {this.state.movieData.map((each) => {
-
-              
                     return (
                       <Movies
                         title={each.title}
@@ -158,12 +162,10 @@ class App extends Component {
                         releasedOn={each.releasedOn}
                       />
                     );
-
                   })}
                 </>
               </Col>
-            
-          )}
+            )}
           </Row>
         </Container>
       </div>
