@@ -1,92 +1,172 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import Main from './components/Main';
-import Weather from './components/Weather';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Col, Row } from 'react-bootstrap';
-import Header from './components/Header';
+import React, { Component } from "react";
+import Main from "./components/Main";
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import { Container, Row, Col } from "react-bootstrap";
+import Alert from "react-bootstrap/Alert";
+import Weather from "./components/Weather";
+import Movies from "./components/Movies";
 
-export class App extends Component {
+
+class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      lat: '0.0',
-      lon: '0.0',
-      cityName: '',
-      showData: false,
-      showAlert: false,
-      errorMsg: '',
-      weather: [],
+      lat: "",
+      lon: "",
+      cityName: "",
+      mapShow: false,
+      displayError: false,
+      errorMsg: "",
+      weatherData: [],
+      movieData: [],
     };
   }
-  getInput = (e) => {
-    this.setState({ cityName: e.target.value });
-  };
-  submitHan = (e) => {
-    e.preventDefault();
-    let apiUrl = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONAPI_KEY}&q=${e.target.searchText.value}&format=json`;
-    axios
-      .get(apiUrl)
-      .then((responseData) => {
-        this.setState({
-          cityName: responseData.data[0].display_name,
-          lat: responseData.data[0].lat,
-          lon: responseData.data[0].lon,
-          showData: true,
-        });
-        this.getWeather(responseData.data[0].lat, responseData.data[0].lon);
-        document.getElementById('form').reset();
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({
-          showAlert: true,
-          showData: false,
-          errorMsg: error,
-        });
-      });
+
+  InputHandler = (e) => {
+    this.setState({
+      cityName: e.target.value,
+    });
   };
 
-  getWeather = (lat, lon) => {
-    //send a request to api endpoint >> recive a response
-    let url = `${process.env.REACT_APP_BACKEND_URL}/weather?lat=${lat}&lon=${lon}&city_name=${this.state.cityName}`;
-    axios.get(url).then((response) => {
-      this.setState({
-        weather: response.data,
-        showData: true,
+  submitHandler = (e) => {
+    e.preventDefault();
+
+    let locUrl = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONAPI_KEY}&q=${this.state.cityName}&format=json`;
+    axios.get(locUrl)
+      .then((response) => {
+        let data = response.data[0];
+
+        this.setState({
+          cityName: data.display_name,
+          lat: data.lat,
+          lon: data.lon,
+          mapShow: true,
+          displayError: false,
+          errorMsg: "",
+        });
+      })
+      .then((lat,lon) => {
+        let weathUrl = `${process.env.REACT_APP_BACKEND_URL}/weather/${lat}/${lon}`;
+        axios.get(weathUrl).then((response) => {
+          this.setState({
+            weatherData: response.data,
+          });
+        });
+      })
+      .then((cityName) => {
+        
+        let movUrl = `${process.env.REACT_APP_BACKEND_URL}/movies/${cityName}`;
+        axios.get(movUrl).then((response) => {
+          this.setState({
+            movieData: response.data,
+          });
+        });
+      })
+      .catch((error) => {
+        this.setState({
+          errorMsg: error,
+
+          displayError: true,
+        });
       });
-    });
   };
 
   render() {
     return (
-      <>
-        <Header submitHan={this.submitHan} />
+      <div>
         <Container fluid>
           <Row>
-            <Col>
-              {this.state.showAlert && alert(this.state.errorMsg)}
-              {this.state.showData && (
-                <Main
-                  cityName={this.state.cityName}
-                  lat={this.state.lat}
-                  lon={this.state.lon}
-                  imgsrc={`${process.env.REACT_APP_IMG_URL}&center=${this.state.lat},${this.state.lon}&zoom=1-18`}
-                />
-              )}
-            </Col>
-            <Col>
-              {this.state.showData &&
-                this.state.weather.map(
-                  (
-                    item,
-                    index // {1.2.3}
-                  ) => <Weather key={index} weather={item} />
+            {this.state.displayError && (
+              <Alert key={1} variant={"danger"}>
+                Error In The Data
+              </Alert>
+            )}
+          </Row>
+          <Row>
+            {" "}
+            <div style={{ margin: "20px" }}>
+              <Form onSubmit={(e) => this.submitHandler(e)}>
+                <Form.Group
+                  className="mb-3"
+                  controlId="formBasicCity"
+                  style={{ display: "flex" }}
+                >
+                  <Form.Control
+                    onChange={(e) => {
+                      this.InputHandler(e);
+                    }}
+                    type="text"
+                    placeholder="Enter a City name ..."
+                    style={{ width: "300px" }}
+                  />
+                  <Button variant="primary" type="submit">
+                    Explore!
+                  </Button>
+                </Form.Group>
+              </Form>
+            </div>
+          </Row>
+          {this.state.mapShow && (
+            <Row>
+              <Col>
+                <div style={{ padding: "20px" }}>
+                  <Main
+                    cityName={this.state.cityName}
+                    lat={this.state.lat}
+                    lon={this.state.lon}
+                  />
+                </div>
+              </Col>
+              <Col>
+                {this.state.weatherData && (
+                  <>
+                    {this.state.weatherData.map((idx) => {
+                      return (
+                        <Weather
+                          date={idx.date}
+                          description={idx.description}
+                        />
+                      );
+                    })}
+                  </>
                 )}
-            </Col>
+              </Col>
+            </Row>
+          )}
+
+          <Row fluid style={{ margin: "20px" }}>
+
+            {this.state.movieData && (
+
+              <Col>
+                <>
+                  {this.state.movieData.map((each) => {
+
+              
+                    return (
+                      <Movies
+                        title={each.title}
+                        overview={each.overview}
+                        averageVotes={each.averageVotes}
+                        vote_count={each.vote_count}
+                        imageUrl={each.imageUrl}
+                        popularity={each.popularity}
+                        releasedOn={each.releasedOn}
+                      />
+                    );
+
+                  })}
+                </>
+              </Col>
+            
+          )}
           </Row>
         </Container>
-      </>
+      </div>
     );
   }
 }
