@@ -57,7 +57,7 @@ Finish time: 12/8/2021 - 5:00
 
 Actual time needed to complete: 40 min
 
-Lab 7
+Lab 8
 Name of feature: 2. Weather (placeholder)
 
 Estimate of time needed to complete: 30 minutes
@@ -93,3 +93,29 @@ Start time: 14/10/2021 06:00 pm
 Finish time: 14/10/2021 07:30 pm
 
 Actual time needed to complete: 90 minutes
+
+lab 9
+
+Time Estimates
+Name of feature: 1.Modularize the back-end codebase.
+
+Estimate of time needed to complete: 30 min
+
+Start time: 13/8/2021 - 2:30
+
+Finish time: 13/8/2021 - 2:45
+
+Actual time needed to complete: 15 min
+
+
+
+Time Estimates
+Name of feature: 1.Componentize the front-end codebase.
+
+Estimate of time needed to complete: 30 min
+
+Start time: 13/8/2021 - 2:30
+
+Finish time: 13/8/2021 - 2:45
+
+Actual time needed to complete: 15 min
