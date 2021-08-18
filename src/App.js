@@ -25,16 +25,16 @@ class App extends Component {
     };
   }
 
-  InputHandler = (e) => {
+  InputHandler = (value) => {
     this.setState({
-      cityName: e.target.value,
+      cityName: value,
     });
   };
 
   submitHandler = (e) => {
     e.preventDefault();
-
-    let locUrl = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONAPI_KEY}&q=${this.state.cityName}&format=json&accept-language=en
+   console.log(e.target.city.value)
+    let locUrl = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONAPI_KEY}&q=${e.target.city.value}&format=json&accept-language=en
     `;
     axios
       .get(locUrl)
@@ -63,7 +63,7 @@ class App extends Component {
       });
   };
   handelMovies=()=>{
-    let movUrl = `http://localhost:3022/movies?city=${this.state.cityName}`;
+    let movUrl = `${process.env.REACT_APP_BACKEND_URL}/movies?city=${this.state.cityName}`;
     axios.get(movUrl).then((response) => {
       this.setState({
         movieData: response.data,
@@ -72,7 +72,7 @@ class App extends Component {
   }
 handeWeater=()=>{
   console.log(this.state.cityName);
-  let weathUrl = `http://localhost:3022/weather?cityName=${this.state.cityName}`;
+  let weathUrl = `${process.env.REACT_APP_BACKEND_URL}/weather?cityName=${this.state.cityName}`;
   axios.get(weathUrl).then((response) => {
     this.setState({
       weatherData: response.data,
@@ -105,9 +105,10 @@ handeWeater=()=>{
                 >
                   <Form.Control
                     onChange={(e) => {
-                      this.InputHandler(e);
+                      this.InputHandler(e.target.value);
                     }}
                     type='text'
+                    name='city'
                     placeholder='Enter a City name ...'
                     style={{ width: '300px' }}
                   />
